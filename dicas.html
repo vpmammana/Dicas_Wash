@@ -139,7 +139,7 @@ Depois é só gravar com <b>:w</b>.
 Depois é possível fazer a importação para a base de dados, entrando no MySQL usando o comando:
 </p> 
 
-<div class="codigo"><code>mysql -u root -p </code></div> <p>(será perguntada a senha do usuário, no caso "root")</p> 
+<div class="codigo"><code>mysql -u root -p </code></div> <p>(será perguntada a senha do usuário, no caso "________")</p> 
 
 <p>Depois de entrar no mysql é preciso selecionar a base de dados usando o comando:</p>
 
@@ -256,7 +256,7 @@ $sql="select nome,cidade from locais2 where cidade like '".$busca2."%' order by 
 
 <div class="codigo"><code>&ltcode?php 
 $username="victor";
-$pass="ops";
+$pass="senha";
 
 $conn = new mysqli ("localhost", $username, $pass, $database);
 
@@ -3234,7 +3234,7 @@ Se você quiser capturar a câmera usando OpenCV no Python, pode pode usar:
 
 <div class="codigo">
 <code>
-cap = cv2.VideoCapture('http://admin:aerofolio@192.168.15.133/VIDEO.CGI')
+cap = cv2.VideoCapture('http://admin:senha_de_nunca@192.168.15.133/VIDEO.CGI')
 </code>
 </div>
 
@@ -3251,7 +3251,7 @@ Se você quiser capaturar essa câmera IP no python vc pode usar o seguinte cód
 import cv2
 
 #print("Before URL")
-cap = cv2.VideoCapture('http://admin:aerofolio@192.168.15.133/VIDEO.CGI')
+cap = cv2.VideoCapture('http://admin:senha_de_nunca@192.168.15.133/VIDEO.CGI')
 #print("After URL")
 
 while True:
