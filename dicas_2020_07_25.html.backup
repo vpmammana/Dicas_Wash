@@ -1,0 +1,1445 @@
+<!doctype html>
+<html>
+<head>
+  <title>Dicas do WASH</title>
+
+
+  <style type="text/css">
+    div {
+      width: 600px;
+      height: 400px;
+      border: 1px solid lightgray;
+    }
+    code {
+      background-color: black;
+      color: white;
+      white-space: pre;
+    }
+
+   h2 {
+	background-color: green;
+	
+   }
+
+  .codigo {
+	padding: 5px;
+	background-color: black;
+	color: white;
+width: -webkit-fit-content;
+height: -webkit-fit-content;
+width: -moz-fit-content;
+height: -moz-fit-content;
+  }	
+  </style>
+</head>
+<body>
+<table>
+<tr>
+<td>
+<img src="wash.jpg" width="400" style="border: 1px solid black">
+</td>
+<td>
+<p>
+Esta plataforma tem como objetivo compartilhar alguns aprendizados obtidos ao longo do desenvolvimento de plataformas do WASH.
+</p>
+</td>
+</tr>
+</table>
+<h1>Dicas do WASH</h1>
+<p>
+O objetivo desta plataforma é compartilhar conhecimentos sobre Javascript, Mysql, Apache, VIM e PHP obtidos ao longo do desenvolvimento da plataforma WASH.
+<ul>
+  <li>MySQL</li>
+  <li>Javascript</li>
+  <li>PHP</li>
+  <li>Apache</li>
+  <li>VIM</li>
+</ul>
+
+</p>
+
+<p>
+Trata-se de uma primeira aproximação para um futuro site de dicas de programação nas linguagens indicadas acima.
+</p>
+
+<h2>Dica 1: como corrigir o problema de acentuação gráfica no Apache, quando o arquivo é gerado pelo VIM</h2>
+<p>
+É super comum o problema de acentuação quando criamos um arquivo HTML usando o VIM. 
+</p>
+
+Abaixo vemos um caso típico de arquivo HTML criado pelo VIM sem os devidos cuidados. Usaremos uma variante desta mesma página, criada pelo VIM sem tomar cuidado com o enconding.
+</p>
+<div style="background-color: gray; padding: 10px; width: auto; height: auto"><img src="Exemplo_Acentuacao2.png" width="400" style="border: 1px solid black; align: center"></div>
+<p>
+Para corrigir este problema basta escolher o encoding correto, gravando o arquivo depois de usar o seguinte comando no VIM:
+</p>
+
+<div style="background-color: gray; padding: 10px; width: auto; height: auto"><img src="set_fileencoding.png" width="400" style="border: 1px solid black; align: center"></div>
+
+
+<p>
+Para entrar com o comando "set fileencoding=ISO-8859-1" basta teclar ":" quando o VIM não estiver no modo de inserção. Uma linha na parte de baixo da tela se abrirá para que o comando "set fileencoding=ISO-8859-1" possa ser digitado. A partir daí basta teclar ":w", que é o comando de gravação do VIM, e o arquivo HTML será gravado corretamente.
+</p>
+
+<p>
+Dependendo de como o seu apache/php estão configurados, talvez seja necessário fazer:
+</p>
+
+<div class="codigo"><code>:set fileencoding=utf8
+</code></div>
+<p>
+Outros comandos úteis, que eu aprendi com o Banto, são os seguintes:
+</p>
+
+<div class="codigo"><code>   70  iconv -f iso-8859-1 -t utf-8 wash_fk.sql > wash_bantu.sql 
+   77  iconv -f UTF-8 -t ISO-8859-1 wash_fk.sql > wash_bantu-1.sql
+   78  iconv -f ISO-8859-1 -t UTF-8 wash_fk.sql > wash_bantu-2.sql
+   87  iconv -f UTF-8 -t ISO-8859-1 t.txt
+   88  iconv -list
+   89  iconv --list
+   90  iconv -f ISO-8859-1 -t UTF-8 t.txt
+   91  iconv -f US-ASCII -t UTF-8 t.txt
+   92  iconv -f WINDOWS-1250 -t UTF-8 t.txt
+   96  iconv -f WINDOWS-1250 -t UTF-8 t.txt
+   97  iconv -f ISO-8859-1 -t UTF-8 t.txt
+   98  iconv -f ISO-8859-1 -t UTF-8 t.txt
+   99  iconv -f ISO-8859-1 -t UTF-8//TRANSLIT t.txt 
+  100  iconv -f ISO-8859-1 -t UTF-8//TRANSLIT t.txt 
+  110  iconv -f cp1251 -t utf-8 t.txt
+  112  cat t.txt | iconv -t latin1 | iconv -f cp1251 -t utf-8
+  113  iconv -l
+  114  iconv -f ISO8859-1 -t utf-8 t.txt
+  115  iconv -f ISO8859-15 -t utf-8 t.txt
+</code></div>
+
+
+
+<p>
+Depois é só gravar com <b>:w</b>.
+</p>
+
+
+<h2>Dica 2: como corrigir o problema de acentuação gráfica no Apache, quando o arquivo é gerado por outro editor e é importado para o MySQL</h2>
+
+<p> Muitas vezes a origem do problema de acentuação está num arquivo TXT, que foi gravado num formato errado. Para isso, é preciso fazer a conversão usando o comando do linux <b>iconv</b> </p>
+
+<div class="codigo"><img src="iconv.png" width="400" style="border: 1px solid black; align: center"></div>
+<p>
+
+<p>
+Depois é possível fazer a importação para a base de dados, entrando no MySQL usando o comando:
+</p> 
+
+<div class="codigo"><code>mysql -u root -p </code></div> <p>(será perguntada a senha do usuário, no caso "root")</p> 
+
+<p>Depois de entrar no mysql é preciso selecionar a base de dados usando o comando:</p>
+
+<div class="codigo"><code>use nome_da_base</code></div> 
+
+<p>Se você não lembrar o nome da base de dados é preciso buscar com:</p>
+<div class="codigo"><code>show databases</code></div>
+
+<p>Uma vez que vc tenha selecionado a base de dados correta, pode criar uma tabela para receber os dados usando: <div class="codigo"><code>create table NOME_TABELA (campo varchar(100))</code></div>. 
+<p>Depois pode usar o comando: 
+</p>
+
+<div class="codigo"><code>LOAD DATA INFILE "/var/lib/mysql-files/elementos.txt"
+INTO TABLE temporario
+COLUMNS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+ESCAPED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+</code></div>
+
+<p> Note que a importação pode ser feita apenas de diretórios previamente autorizados pelo MySQL. Tem como checar quais são verificando uma variável que eu não lembro agora. Mas sei que no meu caso o diretório autorizado é: </p>
+<div class="codigo"><code> /var/lib/mysql-files </code></div>
+
+<h3>Quando o "select * from tabela where campo like 'busca%'" não reconhece acentuação</h3>
+
+<p>Mesmo depois de resolver todos os problemas de acentuação indicados acima, você ainda pode se deparar com um problema chatíssimo de resolver, quando o select não consegue buscar palavras com acentuação. Este problema é particularmente difícil de resolver para palavras com cedilha ou til.</p>
+
+<p>Por exemplo: suponha que estou buscando a cidade de "São Paulo" pelas 3 primeiras letras "sao". O select não fornece resultados mesmo tomando cuidado de usar o "like" e o % para "match" as letras similares. A mesma situação ocorre quando estamos procurando a palavra "açu" através das 2 primeiras letras "ac".</p>
+
+<p>Eu tentei um monte de soluções antes de conseguir resolver. Primeiro tentei alterar o character set e o collation através de um alter table:</p>
+
+<div class="codigo"><code>alter table locais2 convert to character set utf8mb4 collate utf8mb4_swedish_ci;
+</code></div>
+
+<p>MAS ISTO SOZINHO NÃO FUNCIONA! Sequer tenho certeza se esta mudança do character set e do collation é necessária, embora ela afete o comportamento da busca de alguma forma.</p>
+
+<p>De qualquer forma, depois que eu executei o comando "alter table" fiquei com as definições da tabela como segue:</p>
+
+<div class="codigo"><code>| locais2 | CREATE TABLE `locais2` (
+  `lat` varchar(32) COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `longi` varchar(32) COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `cidade` varchar(254) COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `nome` varchar(254) COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `icon` varchar(100) COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `iconSize` varchar(30) COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `iconOffset` varchar(30) COLLATE utf8mb4_swedish_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci |
+</code></div>
+
+<p>Como já disse, esta alteração sozinha não resolveu o problema. Eu continuava sem obter resultados para uma busca com "são", mesmo havendo a cidade de "são paulo" na base de dados. Para conseguir fazer esta busca funcionar, foi preciso usar os comandos mb_detect_enconding e mb_convert_encoding, combinados com o select como segue: </p>
+
+<div class="codigo"><code>$conn= new mysqli("localhost", $username, $pass, $database);
+$busca2= mb_convert_encoding($busca, "UTF-8", mb_detect_encoding($busca, "UTF-8, ISO-8859-1, ISO-8859-15", true));
+$sql="select nome,cidade from locais2 where cidade like '".$busca2."%' order by cidade";
+</code></div>
+
+<h2>Como achar as raízes de uma estrutura de árvore representada em MySQL</h2>
+
+<p>Use o Query abaixo:</p>
+
+<div class="codigo"><code>select c.nome from elementos as c, elem_elem as a left join elem_elem as b on a.elem2=b.elem1 where b.id is null and c.id=a.elem2;</code></div>
+
+<h2> Como obter a contagem de registros com as mesmas características</h2>
+
+<p>Use o Query abaixo</p>
+
+<div class="codigo"><code>select substring(data,6,2),count(*) from eventos where data like "2014%" group by substring(data,6,2);
+</code></div>
+
+<p> O resultado desse Query é apresentado abaixo:</p>
+<div class="codigo"><code>+---------------------+----------+
+| substring(data,6,2) | count(*) |
++---------------------+----------+
+| 06                  |        2 |
+| 07                  |        1 |
+| 08                  |        4 |
+| 09                  |        7 |
+| 10                  |       11 |
+| 11                  |        6 |
+| 12                  |        7 |
++---------------------+----------+
+</code></div>
+
+<h2>Como mostrar uma tabela resultante de um Query em SQL sem perder os espaços em branco?</h2>
+
+<p>O HTML custuma retirar dois espaços em branco seguidos, transformando-os em apenas. Para evitar esse comportamento é preciso colocar o estilo:</p>
+
+<div class="codigo"><code>style="white-space:pre"</code></div>
+<p>Por exemplo, vamos dizer que o objetivo é mostrar a tabela abaixo:</p>
+
+<pre>
+<div class="codigo"><code>&ltcode style="white-space: pre"&gt
++---------------------+----------+
+| substring(data,6,2) | count(*) |
++---------------------+----------+
+| 06                  |        2 |
+| 07                  |        1 |
+| 08                  |        4 |
+| 09                  |        7 |
+| 10                  |       11 |
+| 11                  |        6 |
+| 12                  |        7 |
++---------------------+----------+
+&lt/code&gt
+</code></div>
+</pre>
+
+<p>Ou seja, use <div class="codigo"><code> &ltcode style="white-space: pre"&gt</code></div></p>
+
+<h2>Como mostrar os bancos de dados de dados presentes no MySQL em PHP</h2>
+
+<p>Use os seguintes comandos para mostrar os Databases presentes no MySQL:</p>
+
+<div class="codigo"><code>&ltcode?php 
+$username="victor";
+$pass="ops";
+
+$conn = new mysqli ("localhost", $username, $pass, $database);
+
+// casos especiais
+
+$sql="select Db from mysql.db where user='victor'";
+
+$result=$conn->query("$sql");
+
+if ($result->num_rows>0) {
+  while($row=$result->fetch_assoc())
+    {
+      $db=$row["Db"];
+      echo "Database: ".$db."\n";
+
+     }
+
+}
+
+else { echo "SQL não deu certo. ".$sql;}
+
+?&gt
+</code></div>
+
+<h2>Como exportar dados de um banco de dados em MySQL para um arquivo de text comum</h2>
+
+<p>Para exportar dados de um banco de dados em MySQL para um arquivo text é possível usar o comando abaixo:</p>
+
+<div class="codigo"><code>SELECT id,elem1,elem2 FROM elem_elem INTO OUTFILE '/var/lib/mysql-files/elem_elem_sem_quote.txt' FIELDS TERMINATED BY ',' ENCLOSED BY '' LINES TERMINATED BY ',\n';
+</code></div>
+
+<p>Note que foi escolhido um diretóio específico para guardar o arquivo resultante do Query. Isso tem que ser assim, caso contrário obtemos um erro do tipo: </p>
+
+<div class="codigo"><code>--secure-prive-prive</code></div>
+
+<h2>Como copiar um banco de dados (database) sem transferir os dados para o novo banco em MySQL</h2>
+
+<p>Para copiar um banco de dados, sem transferir os dados, basta usar o seguinte comando:</p>
+
+<div class="codigo"><code> mysqldump -u usuario -pSENHA -d BancoFonte | mysql -u usuario -pSENHA -D BancoDestino </code></div>
+
+<p>Note que "usuario" é o nome do usuário do banco origem. Este usuário já precisa existir na base. </p>
+<p>A "SENHA" é a senha do usuário, que deve ser colocada logo de pois do modificador "-p", sem espaço.</p>
+<p>"BancoFonte" é o nome do banco de dados existente no MySQL do qual será copiada a estrutura. "BancoDestino" é o banco de dados para onde será copiada a estrutura. Note que o "BancoDestino" precisa existir no servidor "MySQL", mesmo sendo vazio.</p>
+<p>Para criar o "BancoDestino" é preciso usar o comando:</p>
+
+<div class="codigo"><code> create database BancoDestino character set UTF8mb4 collate utf8mb4_bin; </code></div>
+
+<p>Também é necessário atribuir o usuário ao BancoDestino, o que é feito pelo seguinte comando:</p>
+
+<div class="codigo"><code>grant all privileges on BancoDestino.* to 'usuario'@'localhost' identified by 'SENHA'</code></div>
+
+<h2>Como executar um comando antes de fechar uma janela</h2>
+
+<p>Você pode "override" o fechamento de uma janela, desde que o não esteja envolvida a abertura de um pop-up, alert, ou outra forma semelhante.</p>
+
+<p>Para isso, basta usar o seguinte código:</p>
+
+<div class="codigo"><code>window.onbeforeunload = function () {<br>
+   // window.opener.alert("test");<br>
+   //_close();        <br>
+   return callBack();<br>
+};<br>
+function callBack()<br>
+{<br>
+    saida();<br>
+    return;<br>
+}<br>
+</code></div>
+<p>Onde <div class="codigo"><code>saida()</code></div> é a chamada de uma função de  saída que precisa ser executada antes que a janela seja fechada.</p>
+
+<h2>Como acessar um elemento de outra janela</h2>
+<p>Se você quiser acessar um elemento do DOM de uma janela pai (parent), você pode usar:</p>
+
+<div class="codigo"><code>window.opener.document.getElementById("id_elemento_pai").innerText="oi";</code></div>
+
+Se você quer acessar um componente do filho, a partir do pai:
+
+<div class="codigo"><code>a=window.open()<br>
+a.document.getElementById("mydiv")<br>
+</code></div>
+
+<h2>Como mudar o pitch de um som</h2>
+
+<p>Para mudar o pitch de um arquivo de áudio é possível usar o seguinte comando:</p>
+
+<div class="codigo"><code>sox infile.wav outfile.wav pitch -500
+</code></div>
+
+<p>Para instalar o sox podemos usar:</p>
+
+<div class="codigo"><code>apt-get install sox libsox-fmt-pulse pavucontrol</code></div>
+
+<h2>Como usar o sintetizador de voz no linux</h2>
+
+<p>Use o comando espeak:</p>
+
+<div class="codigo"><code>espeak -vpt+f1 -p 75 -s 130 -g 5 -f RoteiroBabolina</code></div>
+
+<p>Ou use o lianetts do Serpro, que é bem superior:</p>
+
+<div class="codigo"><code>lianetts -a 1.2 RoteiroBabolina</code></div>
+ 
+<h2>Como gravar áudio do microfone</h2>
+
+<p> Para gravar áudio do microfone interno, podemos usar o seguinte comando:</p>
+
+<div class="codigo"><code>sox -t alsa default output.wav</code></div>
+
+<h2>Como gravar do áudio interno, sem passar pelo microfone</h2>
+
+<p> Primeiro verifique as fontes de áudio ativas.</p>
+
+<div class="codigo"><code>pactl list short sources</code></div>
+
+<p> Você obterá uma lista das fontes de áudio ativas.</p>
+
+<div class="codigo"><code>0	alsa_output.pci-0000_00_1b.0.analog-stereo.monitor	module-alsa-card.c	s16le 2ch 48000Hz	IDLE <br>
+1	alsa_input.pci-0000_00_1b.0.analog-stereo	module-alsa-card.c	s16le 2ch 48000Hz	RUNNING <br>
+</code></div>
+
+<p> A linha de baixo do código acima é referente ao microfone. A linha de cima é referente ao som interno do computador.</p>
+
+<p> Para acessar o som interno (sem passar pelo microfone), você pode usar:
+
+<div class="codigo"><code>sox -t pulseaudio alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -t wav test.wav</code></div>
+
+<p>Para tocar o som depois de gravado, você pode usar:</p>
+
+<div class="codigo"><code>play test.wav</code></div>
+
+<p>Pode acontecer do volume da fonte de som interna estar baixo. Para verificar o volume, vc pode usar o comando:</p>
+
+<div class="codigo"><code>pactl list sources</code></div>
+
+<p> A diferença desse comando é que ele fará uma descrição extensa das informações das fontes de som, inclusive o volume.</p>
+
+<p> Se o volume da fonte interna do som, sem passar pelo microfone, estiver muito baixo, é possível aumentar com o seguinte comando:</p>
+
+<div class="codigo"><code>pactl set-source-volume alsa_output.pci-0000_00_1b.0.analog-stereo.monitor 100%</code></div>
+
+<p> O comando acima aumentará o volume para o nível de 100%</p>
+
+<p> Você pode também listar os sinks de som:</p>
+
+<div class="codigo"><code>pactl list sinks</code></div>
+
+<h2>Como usar o Google para sintetizar voz</h2>
+
+<p> O ideal é instalar o <b> Aloud </b> no Chrome e fazer ele ler o texto que está numa webpage, por exemplo, este texto aqui funciona muito bem.</p>
+
+<p> Você liga o Aloud para gerar o som e usa o sox para gravar, chamando o sox numa linha de comando do linux. </p>
+
+<p> É preciso indicar a fonte interna de som. Para identificar qual fonte é, usamos o <b>pactl</b> que foi descrito acima, inserindo como parâmetro no comando sox: </p>
+
+<div class="codigo"><code>sox -t pulseaudio alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -t wav test.wav</code></div>
+
+<h2>Como selecionar as tabelas que não têm FOREIGN KEY</h2>
+
+</p>(fonte: Bart Gawrych em Dataedo)</p> 
+<p>Se você quiser a lista das tabelas que não têm FOREIGN KEY, basta usar o select abaixo:</p>
+<div class="codigo"><code>select tab.table_schema as database_name, tab.table_name, 'Sem FKs' as foreign_keys from information_schema.tables as tab left join information_schema.table_constraints fks on fks.table_schema = tab.table_schema and fks.table_name = tab.table_name and fks.constraint_type ='FOREIGN KEY' where tab.table_type = 'BASE TABLE' and tab.table_schema not in ('mysql', 'information_schema', 'performance_schema', 'sys') and fks.table_name is null and tab.table_schema = 'codex' order by tab.table_schema, tab.table_name;</code></div>
+
+<h2>Determinando a quantidade de records em cada tabela</h2>
+
+<p>O comando abaixo lista a quantidade de records (linhas) em cada tabela de um database:</p>
+
+<div class="codigo"><code>SELECT table_name, table_rows
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA = 'SEU DATABASE';
+</code></div>
+
+<h2>Como acionar o MySQL de dentro do VIM</h2>
+
+<p>Coloque o seguinte comando:</p>
+
+<div class="codigo"><code>:command -range=% Db :<line1>,<line2>w !mysql -uroot -ppassword nome_database -t</code></div>
+
+<div class="codigo"><code>Depois é só chamar :Db.</code></div>
+
+<h2>Como capturar um vídeo da tela</h2>
+
+
+<div class="codigo"><code>ffmpeg -y -video_size 800x600 -framerate 30 -f x11grab -i :0.0 -f pulse -ac 2 -i default /tmp/screen1_recording_`date '+%Y-%m-%d_%H-%M-%S'`.mp4 &> /tmp/screen1_recording_`date '+%Y-%m-%d_%H-%M-%S'`.log
+</code></div>
+
+<p>Para capturar imagens do scratch no computador HP, os parâmetros são:</p>
+
+<div class="codigo"><code>ffmpeg -y -video_size 985x705 -framerate 30 -f x11grab -i :0.0+180,30 -f pulse -ac 2 -i default screen1_recording_`date '+%Y-%m-%d_%H-%M-%S'`.mp4</code></div>
+
+
+<h3>Explicação dos detalhes desse comando:</h3>
+(fonte: https://www.reddit.com/r/linux/comments/8n3ylp/screen_recording_in_x11_with_ffmpeg/)
+
+<ul>
+<li><b>-y</b> Overwrites existing file, if found, without confirmation.</li>
+
+<li><b>-video_size 800x600</b> This specifies the size of the area of your screen to capture video from.</li>
+
+<li><b>-framerate 30 -f x11grab -i :0.0</b> The -framerate specifies the rate, in frames per second, to sample video; 30 fps in this example. The '-f x11grab' is an ffmpeg input device which allows raw video capture of your X11 windowing system. The -i specifies where, relative to the upper-left most corner of your first display (0.0), to capture the frame from.
+
+<li><b>-f pulse -ac 2 -i default</b> The '-f pulse' is an ffmpeg input device which allows raw audio capture of your pulse audio sound system. You can also use '-f alsa' here, though I've not tested myself. The -ac sets the number of output audio channels; 2 in this example for stereo. The -i here specifies the sound device to capture from; default typically works fine.<li>
+
+<li><b>/tmp/screen1_recording_\date '+%Y-%m-%d_%H-%M-%S'`.mp4`</b> The output capture file and path with an appended/formatted date/time stamp.</li>
+
+<li><b>&> /tmp/screen1_recording_\date '+%Y-%m-%d_%H-%M-%S'`.log`</b> Redirection of ffmpeg's output to an accompanying file. Helpful messages about how the recording went are captured here.</li>
+</ul>
+
+<h2>Como gravar vídeo da tela e do som interno (sem passar pelo microfone)</h2>
+
+<p>
+Se vc quiser gravar a imagem da tela, pegando o microfone interno, vc pode usar o ffmpeg da seguinte forma:
+</p>
+
+
+<div class="codigo"><code> ffmpeg -y -video_size 1366x768 -framerate 30 -f x11grab -i :0.0 -f pulse -ac 2 -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor screen1_recording_`date '+%Y-%m-%d_%H-%M-%S'`.mp4
+</code></div>
+
+<p>
+Note que vc tem que colocar a fonte do áudio <i>alsa_output.pci-0000_00_1b.0.analog-stereo.monitor</i> logo após a opção -i do pulse.
+</p>
+
+
+
+<h2>Como gravar um vídeo a partir do Scratch</h2>
+
+<p>O comando abaixo permite gravar exatamente o frame do scratch 1.4 em modo cheio, no HP ProBook.</p>
+
+<div class="codigo"><code>ffmpeg -y -video_size 768x575 -framerate 30 -f x11grab -i :0.0+333,138 -f pulse -ac 2 -i default screen1_recording_`date '+%Y-%m-%d_%H-%M-%S'`.mp4
+</code></div>
+
+<p>
+O comando abaixo permite gravar do Scratch Web 3.0, em modo cheio, no micro HP ProBook:
+
+</p>
+
+<div class="codigo">
+<code>ffmpeg -y -video_size 757x565 -framerate 30 -f x11grab -i :0.0+340,148 -f pulse -ac 2 -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor screen1_recording_`date '+%Y-%m-%d_%H-%M-%S'`.mp4</code>
+</div>
+
+<p>O comando acima corta uma parte da tela do scratch. Para pegar um pouco mais da tela, vc pode tentar:</p>
+
+<div class="codigo">
+<code>
+ffmpeg -y -video_size 810x565 -framerate 30 -f x11grab -i :0.0+315,148 -f pulse -ac 2 -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor screen1_recording_`date '+%Y-%m-%d_%H-%M-%S'`.mp4
+</code>
+</div>
+
+<h2>Como ver apenas os subdiretórios de um diretório</h2>
+
+<div class="codigo"><code>ls -d */</code></div>
+
+<h2>Como lidar com maiúsculas e minúsculas no VIM</h2>
+
+<p>A sequência abaixo deixa o VIM muito melhor, porque permite fazer a busca "case insensitive" quando todos os caracteres de busca são minúsculos, e faz a busca "case sensitive" quando pelo menos um dos caracteres de busca é maiúsculo.</p>
+
+<p>Fonte: https://stackoverflow.com/questions/2287440/how-to-do-case-insensitive-search-in-vim</p>
+
+<div class="codigo"><code>:set ignorecase
+:set smartcase
+/copyright      " Case insensitive
+/Copyright      " Case sensitive
+/copyright\C    " Case sensitive
+/Copyright\c    " Case insensitive
+</code></div>
+
+<h2>Escolha a ordem correta de execução de eventos</h2>
+
+<p>O addListener permite escolher dois tipos de propagação de eventos:</p>
+
+<ul>
+<li>Bubbling: o evento é capturado pelo elemento mais interno primeiro.</li>
+<li>Capturing: o evento é capaturado pelo elemento mais externo primeiro.</li>
+</ul>
+
+
+<h2>Estatística de ocorrência de palavras</h2>
+
+
+<p>Você pode contar a frequência de ocorrência das palavras usando o comando abaixo, que também limpa brancos duplos e sinais de pontuação.</p>
+
+<div class="codigo"><code>cat file.txt | tr '[:punct:]' ' ' | tr 'A-Z' 'a-z' | tr -s ' ' | tr ' ' '\n' | sort | uniq -c | sort -rn
+</code></div>
+
+<h2>Tirar a acentuação</h2>
+
+<p>Eu lembro vagamente de ter testado isso:</p>
+
+<div class="codigo"><code>sed 'y/áÁàÀãÃâÂéÉêÊíÍóÓõÕôÔúÚçÇ/aAaAaAaAeEeEiIoOoOoOuUcC/' < input.txt > output.txt
+</code></div>
+<h2>Encontrar numa tabela registros que coincidem com registros de outra tabela</h2>
+
+<p>O SQL abaixo permite encontrar em uma tabela registros que tem um campo que coincide com o campo de registros de outra tabela:</p>
+
+<div class="codigo"><code>select * from temp2_part_cpf where nome in (select distinct(nome) from participantes);</code></div>
+
+<h2>Apagar registros de uma tabela que estão em outra tabela</h2>
+
+<p>
+Para apagar registros que estão em outra tabela, o comando SQL é o seguinte:
+</p>
+<div class="codigo"><code>delete from temp2_part_cpf where nome in (select nome from temp_part_cpf);</code></div>
+
+
+<h2>Como usar REGEXP para procurar registros com acentuação gráfica</h2>
+
+<p>
+É possível usar REGEXP no contexto do Mysql, para procurar todos os registros que tem acentuação gráfica:
+</p>
+
+<div class="codigo"><code>select from participantes where nome regexp '[áÁàÀãÃâÂéÉêÊíÍóÓõÕôÔúÚçÇ]';</code></div>
+<p>
+Esse comando está estranho... porque ele está dando o mesmo resultado que:
+</p>
+<div class="codigo"><code>select from participantes where nome regexp '[á]';</code></div>
+
+<h2>Como transformar uma data aaaa-mm-dd em aaaammdd</h2>
+
+<p>
+Para fazer substituições levando aaaa-mm-dd em aaaammdd basta usar o seguinte código no vim:
+</p>
+
+<div class="codigo"><code>:%s/\([0-9][0-9][0-9][0-9]\)-\([0-9][0-9]\)-\([0-9][0-9]\)/\1\2\3/gc</code></div>
+
+<p>
+O que está entre \(\) é um bloco. Os blocos são referenciados em ordem de ocorrência por \1 \2 no campo de substituição.
+</p>
+
+
+<p>
+O conjunto [0-9] pega qualquer carácter númerico. Dois seguidos, como em [0-9][0-9],  pega 2 caracteres numéricos... 4 seguidos pega quatro. O resto do comando é o padrão para o vim :%s/search/replace/gc.
+</p>
+
+<h2>Para colocar uma vírgula antes do Carriage Return ou New Line</h2>
+
+<p>
+Depois de experimentar alguns comandos, eu descobri o seguinte:
+</p>
+
+<div class="codigo"><code>:%s/\n/,\r/gc</code></div>
+
+<h2>Como buscar uma regular expression (REGEXP) no MySQL</h2>
+
+<p>
+Usaremos a REGEXP [0-9] como exemplo.
+</p>
+
+
+<div class="codigo"><code>select * from table where regexp '[0-9]'</code></div>
+
+<h2>Como substituir um caracter de uma campo</h2>
+
+<p>
+Assumindo que o campo é 'nome' e que queremos trocar C por A, basta usar o update da seguinte forma:
+</p>
+<div class="codigo"><code>update table set nome=replace(nome, 'C','A' );</code></div>
+
+<h2></h2>
+<p>
+Como criar uma tabela em Mysql, copiando sua estrutura, índices e triggers, e depois copiar os dados.
+</p>
+
+<div class="codigo"><code>CREATE TABLE newtable LIKE oldtable; 
+INSERT INTO newtable SELECT * FROM oldtable;
+</code></div>
+
+<p>Para copiar apenas a estrutura e os dados:</p>
+
+<div class="codigo"><code>CREATE TABLE tbl_new AS SELECT * FROM tbl_old;
+</code></div>
+
+<h2>Cuidado com o DISTINCT COUNT</h2>
+
+<p>Quando for calcular o número de resultados de um select com distinct, tem que tomar cuidado para não fazer simplesmente:</p>
+
+<div class="codigo"><code>ERRADO: select distinct count(*) from table where condition;</code></div>
+
+<p>O jeito certo é:</p>
+
+<div class="codigo"><code>CERTO: select count(distinct(nome)) from table where condition;</code></div>
+
+<h2>Como ver o tamanho ocupado por diretórios</h2>
+
+<p> O comando abaixo permite encontrar o tamanho de todos os diretórios (primeiro nível) de um dado diretório. No exemplo abaixo estamos vendo o tamanho dos sub-diretórios que estão no diretório raiz.
+</p>
+
+<div class="codigo"><code>du -ch --max-depth=1 / 2>/dev/null
+</code></div>
+
+<p>
+Outro comando útil é o df.</p>
+
+
+<h2>Como ver quais são os maiores arquivos do sistema operacional</h2>
+
+<p>
+O comando abaixo permite verificar quais são os maiores arquivos do sistema operacional: 
+</p>
+
+<div class="codigo"><code>du -a / | sort -n -r | head -n 5
+</code></div>
+
+<p>
+Note que não adianta tentar usar o parâmetro -h (human readable), porque isso vai atrapalhar o sorting. Então o resultado será apresentado em kilobytes.
+</p>
+
+<h2> 
+Falta de disco por causa de error_log
+</h2>
+
+<p>
+É preciso prestar atenção na questão da falta de disco por causa do crescimento do error_log. A melhor forma de tratar isso é através do comando logrotate. Mas eu não sei usar muito bem. Na emergência, e apenas na emergência, é possível usar o comando abaixo. Evite apagar o error_log com RM. Melhor usar o comando abaixo. Note que o error_log é muito importante para identificar padrões de funcionamento do servidor. Não é aconselhável simplesmente usar o comando abaixo, porque vc perde informações sobre o sistema. Mas na emergência... 
+</p>
+
+<div class="codigo"><code>echo > error_log</code></div>
+
+<h2> 
+Onde ficam os logs do Apache no Bitnami?
+</h2>
+
+<p>
+Abaixo segue o diretório onde estão os logs do apache, no bitnami:
+</p>
+
+<div class="codigo"><code>/opt/bitnami/apache2/logs
+</code></div>
+
+<h2> 
+Como pegar a lista de todos os usuários do sistema
+</h2>
+
+<p>
+Basta mostrar o conteúdo do arquivo /etc/passwd
+</p>
+
+<div class="codigo"><code>less /etc/passwd
+</code></div>
+
+<p>
+O comando acima mostra um monte de informação ao mesmo tempo. Se quiser efetivamente só os usuários, vc pode usar o awk ou o cut:
+</p>
+<div class="codigo"><code>cut -d: -f1 /etc/passwd
+</code></div>
+
+<p>
+Outro comando é o getent:
+</p>
+
+<div class="codigo"><code>getent passwd
+</code></div>
+
+<p>
+Para ver se um usuário existe no sistema:
+</p>
+
+<div class="codigo"><code>getent passwd | grep usuario
+</code></div>
+
+<h2>Para lidar com grupos</h2>
+
+<p>
+Para listar todos os membros de um grupo:
+</p>
+
+<div class="codigo"><code>getent group nome_grupo
+</code></div>
+
+<p>
+Se o grupo existir, o comando acima vai mostrar todos os membros do grupo:
+</p>
+
+
+<div class="codigo"><code>nome_grupo:x:100:joao,maria
+</code></div>
+
+<p>Para listar todos os grupos do sistema:</p>
+<div class="codigo"><code>less /etc/group</code></div>
+
+<p>
+Outra possibilidade é:
+</p>
+
+<div class="codigo"><code>getent group
+</code></div>
+
+
+<h2>Commando Groups</h2>
+
+<p>
+Se você escrever groups sem nenhum parâmetro, vai obter todos os grupos dos quais o atual usuário faz parte.
+</p>
+
+<div class="codigo"><code>groups</code></div>
+
+<p>
+Para obter a lista de grupos dos quais um dado usuário <i>nome_usuario</i> faz parte:
+</p>
+
+<div class="codigo"><code>groups nome_usuario</code></div>
+
+<p>A resposta será no formato</p>
+
+<div class="codigo"><code>nome_usuario: nome_usuario, www-data</code></div>
+
+<h2>Adicionando um novo grupo</h2>
+
+<p>
+Como root, é preciso executar o seguinte comando:
+</p>
+
+<div class="codigo"><code>groupadd novo_grupo</code></div>
+
+<h2>Adicionar um usuário existente a um grupo existente</h2>
+
+<p>
+Para adicionar um usuário existente <i>nome_usuario</i> ao um grupo existente <i>nome_grupo</i>, basta usar:
+</p>
+
+<div class="codigo"><code>usermod -a -G nome_grupo nome_usuario</code></div>
+
+<p>
+Quando você usa -G (maiúsculo) vc vai adicionar o usuário a um grupo como se esse grupo fosse secundário.
+</p>
+<p>
+Esse ponto é muito importante, porque vc pode querer mudar o grupo primário do usuário e isso significa que todos os processos de login e todos os arquivos que o usuário criar vão ficar no grupo primário. Se você quiser evitar isso, vc tem que mudar o grupo primário, e para isso vai usar -g (minúscula), como segue.
+</p>
+
+<div class="codigo"><code>usermod -g nome_usuario</code></div>
+
+<p>
+Você pode adicionar um usuário a múltiplos grupos, como segue:
+</p>
+
+<div class="codigo"><code>usermod -a -G grupo1, grupo2, grupo3 nome_usuario
+</code></div>
+
+<h2>Como achar o usuário que está sendo usado pelo APACHE</h2>
+
+<p>
+Uma das encrencas mais chatas para os iniciantes é quando o programa em PHP não consegue escrever num diretório. Além de perigoso, muitas vezes a pessoa se perde por causa das permissões. 
+</p>
+
+<p>É comum autorizar os membros do grupo www-data a acessarem os arquivos de um diretório. Esse é o grupo primário do usuário www-data do apache. Mas por algum motivo, esse usuário pode mudar.</p>
+
+<p>
+Se você quiser mostrar qual é o nome do usuário que o apache está usando, você pode usar:
+</p>
+
+<div class="codigo"><code>ps -ef | egrep '(httpd|apache2|apache)' | grep -v 'whoami' | grep -v root | head -n1 | awk '{print $1}'</code></div>
+
+<h2>Como mudar o usuário que o Apache está usando?</h2>
+
+<p>
+Você precisa alterar o arquivo httpd.conf, que fica no xamppfiles.
+</p>
+
+<h2>Mostrar todos os identificadores de um programa em javascript usando grep</h2>
+<p>O truque abaixo permite ver todos os ids de um programa em javascript, usando grep e regexp.</p>
+<div class="codigo"><code>grep -ioh id=\"[a-z,_]*\"</code></div>
+
+<h2>Evento Click vs. MouseDown</h2>
+<p>
+No Click, é preciso soltar o botão esquerdo no mesmo elemento em que ele foi pressionado. No "MouseDown" o evento ocorre sempre que um botão for pressionado sobre um elemento. Sempre tenho dificuldades em capturar o evento Click, mas o MouseDown é tranquilo.
+
+</p>
+
+<h2>Quando a página não atualiza</h2>
+
+<p>
+Quando estamos no ambiente de desenvolvimento, é comum fazer testes dos programas PHP chamando-os pela URL num browser. É comum ser necessário apertar dezenas de vezes o F5, ctrl-F5 e ctrl-R para tentar atualizar até haja a atualização de fato. 
+</p>
+
+<p>
+Esse problema costuma ocorrer com arquivos PHP, mesmo quando alteramos as regras de cache no HTML. Para resolver isso, é preciso mudar uma configuração específica do php.ini.
+</p>
+
+<div class="codigo"><code>[opcache]
+zend_extension=opcache.so
+opcache.enable=0
+</code></div>
+
+<p>
+Esta configuração costuma ficar no arquivo php.ini que fica no diretório etc.
+</p>
+
+<h2>Como alterar os comentários de uma tabela no MYSQL</h2>
+
+<p>Para alterar os comentários numa tabela MYSQL é preciso usar o código abaixo:</p>
+
+<div class="codigo"><code>ALTER TABLE test_comments COMMENT = 'Teste de alteração de comentários';
+</code></div>
+
+<h2>Como ver os comentários de uma tabela MySQL</h2>
+<p>Para ver os comentários de uma tabela MySQL:</p>
+
+<div class="codigo"><code>SELECT TABLE_COMMENT FROM information_schema.TABLES WHERE TABLE_NAME = 'tabela'
+</code></div>
+
+
+<h2>Como importar um arquivo CSV para dentro do MySQL</h2>
+<p>O MySQL é protegido para importação de dados CSV. Ele aceita apenas de um diretório específico. Se você tentar importar de um diretório não autorizadao, vai obter o erro:</p>
+
+<div class="codigo"><code>ERROR 1290 (HY000): The MySQL server is running with the --secure-file-priv option so it cannot execute this statement
+</code></div>
+<p>Para resolver isso precisa primeiro identificar qual é o diretório que foi autorizado para conter arquivos csv para o MySQL. Use o comando abaixo no MySQL:</p>
+<div class="codigo"><code>SHOW VARIABLES LIKE "secure_file_priv";
+</code></div>
+
+<p>Copie o arquivo para esse diretório, e depois use o comando abaixo para importar:</p>
+
+<div class="codigo"><code> LOAD DATA INFILE '/diretorio_autorizado/arquivo.csv' INTO TABLE AGSN FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n' (CD_GEOCODI, CD_AGSN, NM_AGSN, CD_GEOCODM, Nome_Municipio, UF, COD_SETOR, SITUACAO_S, MORADORES_, MORADORE_1, MORADORE_2, NOA3, N4A17, N18A59, N60A79, ACIMA80) ;
+</code></div>
+
+<p>Se vc está trazendo os dados do EXCEL/LIBREOFFICE, o ideal é "Salvar Como" CSV, usando aspas para todos os campos. Para isso, é preciso definir que todos os campos são TEXTO, mesmo os numéricos. </p>
+
+<h2>Como descobrir a resolução do computador</h2>
+
+<p>Para descobrir a resolução da tela do computador em linha de comando, use os seguintes comandos:
+</p>
+
+<div class="codigo"><code>xdpyinfo | grep dimensions
+</code></div>
+
+<h2>Como criar uma tabela a partir de outra sem trazer os dados</h2>
+
+<p>
+Para criar uma tabela a partir de outra, sem trazer os dados, podemos usar:
+</p>
+
+<div class="codigo"><code>CREATE TABLE agsn_posicoes SELECT * FROM agsn WHERE 1 = 2;
+</code></div>
+
+<h2>Como mostrar as transações enquanto elas estão ocorrendo</h2>
+
+<p>
+Como mostrar as transações que estão ocorrendo no mysql (por exemplo, quando a transação está demorando e vc quer ver se os dados estão efetivamente entrando):
+</p>
+
+<div class="codigo"><code> SHOW FULL PROCESSLIST;
+</code></div>
+
+<p>
+Outra possibilidade é usar:
+</p>
+
+<div class="codigo"><code>SHOW ENGINE INNODB STATUS;
+</code></div>
+
+<h2>Como mandar a saída de um select para um arquivo TXT</h2>
+
+<p>
+Para mandar a saída de um select para um arquivo TXT, basta usar o comando abaixo em MySQL:
+</p>
+
+<div class="codigo"><code> select CD_AGSN,sum(MORADORE_1) from AGSN group by CD_AGSN into outfile '/home/note/arquivos_mysql/MORADORE_1.txt' FIELDS TERMINATED BY ',' enclosed by '' lines terminated by '\n';
+</code></div>
+
+<h2>Como resolver <i>sql_mode=only_full_group_by</i></h2>
+
+<p>
+Este problema é causado quando tentamos fazer um select com group by, e selecionamos um campo para ser mostrado que não tem um regra clara para ser selecionado. Nas versões anteriores do MySQL esse tipo de situação não era problema, porque ele atuava no modo "forgiving", em que não era verificada esta situação. A rigor, este modo poderia permitir a vinda de lixo do query. Uma forma de evitar isso é tentar agregar o campo que está sendo buscado. No caso de se ter certeza que este campo é idêntico para todos os valores agregados pelo group by, podemos usar max() ou min(), como segue:
+</p>
+
+<div class="codigo"><code>select nome, max(cidade), count(*) from tabela group by nome;
+</code></div>
+
+
+
+
+<h2>Como reduzir o tamanho de um JPG com ImageMagick</h2>
+
+
+<p>
+Para reduzir o tamanho de um arquivo JPG com image magick, definindo o tamanho do arquivo alvo, use o comando abaixo:
+</p>
+
+<div class="codigo"><code>convert alerta_coronavirus-1.jpg -define jpeg:extent=300kb alerta_coronavirus_menor.jpg
+</code></div>
+
+<h2>Como verificar os registros diferentes entre duas tabelas</h2>
+
+<p>
+No caso abaixo foi usada a comparação entre as tabelas Lista_de_Tabelas dos databases Codivex e Codex, que têm lista de tabelas bem próximas mas não iguais. Eu precisava verificar quais eram diferentes.
+</p>
+
+<p>
+O SQL abaixo mostra os elementos de codex que são diferentes de covidex.
+</p>
+
+
+<div class="codigo"><code> select a.nome_da_tabela as nome_codex, a.id_chave_tabela as id_codex from codex.lista_de_tabelas as a where (select count(*) from lista_de_tabelas as c where c.nome_da_tabela=a.nome_da_tabela)=0;	
+</code></div>
+
+<p>
+O SQL abaixo mostra os elementos da Lista_de_Tabelas de covidex que são diferentes de codex:
+</p>
+
+<div class="codigo"><code> select a.nome_da_tabela as nome_covidex, a.id_chave_tabela as id_covidex from lista_de_tabelas as a where (select count(*) from codex.lista_de_tabelas as c where c.nome_da_tabela=a.nome_da_tabela)=0;
+</code></div>
+
+<p>
+Para mostrar todos registros de covidex.lista_de_tabelas e codex.lista_de_tabelas que tem o mesmo nome:
+</p>
+
+<div class="codigo"><code> select a.nome_da_tabela as nome_codex, b.nome_da_tabela as nome_codivex, a.id_chave_tabela as id_codex, b.id_chave_tabela as id_codivex from codex.lista_de_tabelas as a, lista_de_tabelas as b where a.nome_da_tabela=b.nome_da_tabela;
+</code></div>
+
+<h2>Como achar todas as correcoes de id da Tabela Covidex para a Tabela Codex</h2>
+
+<p>
+Este é um assunto bem particular do sistema de geração de interfaces, especificamente a tabela Descricoes_das_Interfaces:
+</p>
+
+<div class="codigo"><code> select a.id_tabela_de_busca, a.id_tabela_de_busca_corrigido, d.nome_da_tabela as nome_codex, c.nome_da_tabela as nome_covidex from descricoes_das_interfaces as a, lista_de_tabelas as c, codex.lista_de_tabelas as d where a.id_tabela_de_busca_corrigido=d.id_chave_tabela and d.nome_da_tabela=c.nome_da_tabela;
+</code></div>
+
+<h2>Como mostrar os bytes contidos numa string em Javascript</h2>
+
+<p>
+Vira e mexe me defronto com um resposta de um HttpRequest que vem com carácteres escondidos. 
+
+Este tipo de coisa é típica de quando é feita uma conexão com uma tabela e o resultado do SQL é nulo, numa chamada PHP. Você explora a saída no Browse e não vê os carácteres escondidos. Para enfrentar isso, obtive esta dica na rede:
+</p>
+
+
+<p>(Esta é uma dica de techird)</p>
+
+<div class="codigo"><code>function unpack(str) {
+    var bytes = [];
+    for(var i = 0; i < str.length; i++) {
+        var char = str.charCodeAt(i);
+        bytes.push(char >>> 8);
+        bytes.push(char & 0xFF);
+    }
+    return bytes;
+}
+</code></div>
+
+<h2>Cuidado com o retorno de uma string numa chama HTTPRequest</h2>
+
+<p>
+Usando o "unpack" de string, percebi que o valor nulo gerado por um "return" num código PHP na verdade vem com new-lines e char(0). Isso torna impossível usar o $strint="" como retorno de uma chamada PHP, comparando com um um string nulo. Em outras palavras, algo como o código abaixo não funciona:
+</p>
+
+<div class="codigo"><code>           oReq.onload = function (e) {
+                     resposta=oReq.responseText;
+                     if (resposta!="") {document.getElementById("tal").innerHTML="sei la o que";
+</code></div>
+
+<p>
+Para resolver isso é preciso trim() a variável resposta.
+</p>
+
+<div class="codigo"><code>           oReq.onload = function (e) {
+                     resposta=oReq.responseText;
+                     if (resposta.trim()!="") {document.getElementById("tal").innerHTML="sei la o que";
+</code></div>
+
+<p>
+É curioso porque esse comportamento não se reproduz o tempo todo... tem horas que dá problema, tem horas que não.
+</p>
+
+
+<h2>Como converter SHP para GPX</h2>
+
+<p>
+Para converter SHP para GPX basta usar o JOSM, que é o aplicativo de edição do Open Street Maps. Mas quando vc instala o JOSM não vem o plugin OpenData. Para instalar o plugin é preciso entrar em "editar"|"preferências"|"plugins"|"baixar plugins" e depois instalar o OpenData.
+</p>
+<p>
+Instalado o OpenData, basta abrir o arquivo SHP e exportar para GPX dentro do próprio JOSM.
+</p>
+
+<h2>Como converter DBF para MySQL</h2>
+<p>
+Para converter DBF para MySQL use o comando abaixo:
+</p>
+
+<div class="codigo"><code>dbf2mysql -vv -q -h localhost -P sua_senha -U root SJC_Bairros.dbf -d SJC_Bairros -c
+</code></div>
+
+<p>
+Com as seguintes opções:
+</p>
+
+<ul>
+	<li>
+		-h: o host onde está a base
+	</li>
+	<li>
+		-P: a sua senha, colocada na linha de comando
+	</li>
+	<li>
+		nome do arquivo DBF: no caso é SJC_Bairros.dbf	
+	</li>
+	<li>
+	-d: logo após esta opção vai entrar o nome da base de dados, que se não me engano deve estar criada anteciadamente, muito embora a opção -c talvez seja para criar	
+	</li>
+
+</ul>
+<p>
+Este comando vai criar uma tabela "test" na base com o nome indicado. Esta tabela conterá os dados presentes no arquivo DBF.
+</p>
+
+<h2>Como carregar um arquivo JSON para dentro do código javascript que está no cliente</h2>
+
+<p>
+Suponha que o arquivo JSON está no servidor, e vc quer passar ele para uma variável do código em Javascript.
+</p>
+
+<p>
+O arquivo JSON é um tipo de XML que contém um monte de dados estruturados na forma de objetos e structs.
+</p>
+
+<p>
+Para carregar ele para dentro do Javascript, vc precisa chamar um código em PHP através do HTTPRequest.
+</p>
+
+<div class="codigo"><code>&lt?php
+$conteudo=file_get_contents("nome_arquivo.json");
+return $conteudo;
+?&gt
+</code></div>
+<p>
+Na parte do servidor basta carregar fazer o request:
+</p>
+
+<div class="codigo"><code>                        function carrega_json(){                       
+                                var resposta='';                       
+                                var url = 'carrega_bairros_centroide.php';
+                                var oReq = new XMLHttpRequest();       
+                                oReq.open('GET', url, true);
+                                oReq.onload = function(e) {
+                                        resposta=oReq.responseText;    
+                                        SJC_Bairros_Centroide=JSON.parse(resposta); }
+                        oReq.send(); 
+                        }                                              
+</code></div>
+<p>
+Depois disso, basta usar a variável SJC_Bairros_Centroide como se fosse um objeto (usando ponto para indicar as propriedades ou atributos) e colchetes para indicar os elementos de um array.
+</p>
+
+<h2>Como manter o drag do map no OpenLayers 2, mesmo com eventos nos features</h2>
+
+<p>
+A maior dificuldade de programar em Javascript usando o OpenLayers2 são as sobreposições de características. Por exemplo, quando você trata um um determinado evento de mouse, vc acaba perdendo a capacidade de disparar outros eventos. Um caso típico é quando as features cobrem toda a tela, e não é mais possível sentir os clicks no mapdiv, por exemplo. Várias soluções são necessárias para conseguir fazer isso dar certo.
+</p>
+<p>
+Abaixo está uma composição para conseguir fazer com que os features possam ser selecionadas, mas não se perca o drag do mapa.
+</p>
+
+<div class="codigo"><code>map.events.on({                                                                                                                                                                                                                                                           
+                'movestart': function ()                                                                                            
+                                {                                                                                                     
+                var elemento=document.getElementById('caixa_dados');                                                                         
+                if (typeof(elemento) != 'undefined' && elemento !=null) { elemento.style.opacity="0.3";}                                 
+                                },                                                                                                      
+                'moveend': function ()                                                                                                  
+                                {                                                                                                     
+                var elemento=document.getElementById('caixa_dados');                                                                   
+                if (typeof(elemento) != 'undefined' && elemento !=null) { elemento.style.opacity="0.9";}                                   
+                                }                                                                                                   
+
+        });                                                                                                                           
+
+var selectFeatureControl2 = new OpenLayers.Control.SelectFeature(vectorLayer_SJC_borders,{ 
+   'onSelect':function onFeatureSelect(event) {
+                var elemento=document.getElementById('caixa_dados');
+                if (typeof(elemento) != 'undefined' && elemento !=null) { elemento.remove();}
+                cria_dados(montagem_contorno[event.id]); 
+             } , 
+   'onUnselect': function onFeatureUnselect(event) {
+                var elemento=document.getElementById('caixa_dados');
+                if (typeof(elemento) != 'undefined' && elemento !=null) { elemento.remove();}
+             } 
+
+});
+
+
+if (typeof(selectFeatureControl2.handlers) != "undefined") { // OL 2.7
+    selectFeatureControl2.handlers.feature.stopDown = false;
+} else if (typeof(selectFeatureControl2.handler) != "undefined") { // OL < 2.7
+    selectFeatureControl2.handler.stopDown = false; 
+    selectFeatureControl2.handler.stopUp = false; 
+}           
+
+            map.addControl(selectFeatureControl2);
+            selectFeatureControl2.activate();
+            map.addControl(selectFeatureControl);
+            selectFeatureControl.activate();
+</code></div>
+
+<h2>Como listar todas as descrições de tabelas em linha de comando</h2>
+
+<p>
+Para listar todas as descrições de tabelas MySQL em linha de comando, basta digitar no prompt:
+</p>
+
+<div class="codigo"><code>for i in $(mysql From_JSON -e 'SHOW TABLES' | grep -v "Tables_in" | awk '{print $1}'); do echo "TABLE: $i"; mysql From_JSON -e "DESC $i"; done
+</code></div>
+
+<p>
+Interessante que ao colocar o resultado num arquivo com ">" o resultado gravado perde os caracteres de separação de colunas (?).
+</p>
+
+<h2>Como criar um lista de números crescente no lugar de um match no VIM</h2>
+
+<p>
+Ás vezes é necessário trocar um match que se repete por uma lista crescente de inteiros. Por exemplo, todas as ocorências de XXX por 1, 2, 3, 4, 5, 6, 7, 8, etc...
+</p>
+
+<p>
+Para fazer isso a primeira coisa é definir uma variável e colocar o valor inicial:
+</p>
+
+<div class="codigo"><code>let i=1
+</code></div>
+
+<p>
+Depois é preciso selecionar a região onde quer fazer a troca, usando o comando VISUAL, através da letra <i>V</i>. Feito isso, basta teclar dois pontos para entrar comando, e digitar logo depois dos símbolos de menor e maior:
+</p>
+
+<div class="codigo"><code>g/XXX/s//\='contagem_'.i/ | let i=i+1
+</code></div>
+
+<p>
+Se você não quiser que apareça o string <i>"contagem_"</i>, é só tirar:
+</p>
+
+<div class="codigo"><code>g/XXX/s//\=i/ | let i=i+1
+</code></div>
+
+<p>
+Se quiser inserir uma lista de números em sequência, cada um em uma linha:
+</p>
+
+<div class="codigo"><code>:put =range(11,15)
+</code></div>
+
+<p>
+Com o comando acima teremos: 11, 12, 13, 14, 15.
+</p>
+
+<h2>Uso interessante do REGEX no grep -H</h2>
+<p>
+O comando grep pode ser usado para mostrar o arquivo onde houve o match:
+</p>
+<div class="codigo"><code>grep -H "termo_para_match" *.php
+</code></div>
+
+<p>
+Eu posso querer pegar como match qualquer um dos termos a seguir: $sql=, $sql1=, $sql_1, $sql_ins, $sql_wash... e assim por diante.
+</p>
+<p>
+Como fazer?
+</p>
+<div class="codigo"><code>grep -H "\$sql[a-zA-Z0-9_]*=" *.php &gt todos_sqlX.txt
+</code></div>
+
+<h2>COmo atribuir permissoes de forma automática</h2>
+<p>
+Aprendi com o Banto os seguintes comandos:
+</p>
+
+<div class="codigo"><code>find ./ -type d -exec chmod 755 {} \;
+find ./ -type f -exec chmod 644 {} \;
+</code></div>
+
+<h2>Como transformar PDF em Thumbnail</h2>
+
+<p>
+O ponto é como transformar a primeira página de um PDF em thumbnail.
+</p>
+
+/<p>
+No bitnami é bem fácil porque o imagick já está como extensão do PHP. Então é só usar a classe imagick. Não vou abordar aqui como instalar essa classe, mas tem que instalar o PECL imagick, o próprio imagemagick e o Pear.
+</p>
+
+<p>
+Voltando à questão, é só usar o seguinte código:
+</p>
+
+<div class="codigo"><code>Arquivo: pdf_thumb.php
+&lt?php
+
+$im=new imagick('arquivo.pdf');
+$im-&gtsetImageFormat(jpg);
+$im-&gtthumbnailImage(200,0); // largura de 200 e altura em alto ajuste
+header('Content-Type: image/jpg');
+echo $im;
+
+?&gt
+</code></div>
+
+<p>
+Depois, no html basta fazer isso:
+</p>
+
+<div class="codigo"><code>&lthtml&gt
+&ltbody&gt
+
+&ltimg width="200" src="pdf_thumb.php"&gt
+
+&lt/body&gt
+&lt/html&gt
+</code></div>
+
+<h2>Como fazer o imagick funcionar no PHP, dentro do Bitnami</h2>
+<p>
+Para fazer o imagick rodar dentro do PHP, no contexto do Bitnami, basta entrar no php.ini e descomentar a linha:
+</p>
+
+<div class="codigo">
+<code>extension=imagick</code></div>
+
+<h2>Jeito legal de pegar a extensão de um arquivo em Javascript sem SED</h2>
+
+<p>
+Pegar a extensão de um arquivo com SED no comando replace gera um código sujo cheio de barras e carácteres difícil de debugar.
+</p>
+
+<p>
+Tem um jeito bem mais elegante:
+</p>
+
+
+<code>
+file.split(".").pop();
+</code>
+
+<p>
+Se quiser pegar o nome do arquivo, sem o path é bem fácil também:
+</p>
+
+<code>
+file.split("/").pop();
+</code>
+
+<h2>Como mostrar a posição do cursor usando bash</h2>
+
+<p>
+Para escolher a região da tela que o ffmpeg vai capturar é preciso determinar a posição (x,y) de seus extremos. Para fazer isso, é possível usar o seguinte comando em BASH:
+</p>
+
+<code>
+while (true); do xdotool getmouselocation --shell; done
+</code>
+
+<p>
+Esses comandos podem ser gravados num arquivo texto, que precisa ser transformado em executável com o comando chmod.
+</p>
+
+<h2>Como pegar o tamanho da fonte de um objeto</h2>
+
+<p>
+Para pegar o tamanho da fonte de um objeto não basta usar <i>objeto.style.fontSize</i>. É preciso usar um recurso bem diferente:
+</p>
+<div class="codigo">
+<code>var tamanho_font = window.getComputedStyle(document.getElementByName("nome")).fontSize.replace("px",""); </code></div>
+
+
+<h2>Como colocar uma chave para acesso via ssh no gcloud</h2>
+
+<p>
+Imagine que você quer colocar uma chave no seu computador local, para acessar o servidor bitnami na cloud do Google.
+</p>
+
+<p>
+A primeira coisa a fazer é rodar o <i>ssh-keygen</i> sem nenhum parâmetro no diretório <i>.ssh</i> do <i>home</i>. Este comando vai solicitar o nome do arquivo onde a chave será guardada. Depois o comando solicitará a <i>passphrase</i>, que é uma forma adicional de segurança. Esta passphrase será usada apenas na primeira vez que você tentar acessar o servidor remoto com ssh. Mas antes de tratar isso, vamos ver como a chave é colocada no servidor remoto.
+</p>
+
+<p>
+Quando você roda ssh-keygen, são criados dois arquivos. Suponha que você tenha fornecido o nome "chave_do_note" para o comando ssh-keygen. Então serão criados dois arquivos: chave_do note e chave_do_note.pub.
+</p>
+
+<p>
+O arquivo chave_do_note.pub é o arquivo público que você distribuir. Esse é o arquivo que você colocará no gerenciador de chaves do bitnami. Para colocar essa chave no bitnami é possível usar a interface do gerenciador do servidor no browser. Tem uma página especial para fazer isso. 
+</p>
+
+<p>
+Na primeira vez que vocẽ tentar entrar no servidor remoto, deve digitar <i>ssh -i nome_da_chave usuario@ip</i>. Uma janela pop-up será apresentada, solicitando a entrada da passphrase. Depois que você entrar a passphrase a primeira vez, não precisará entrar mais. Agora nem precisa mais colocar a opção -i na chamada do ssh. Também não será mais necessário colocar o nome do arquivo da chave pública. Basta colocar <i>ssh usuario@ip</i> para entrar.
+</p>
+
+<h2>Como verificar quais portas estão sendo monitoradas</h2>
+
+<p>
+Dica do Michael: para saber quais portas estão sendo monitoradas, basta digitar <i>ss -t -a</i>.
+</p>
+
+<h2>Como estabelecer uma conexão Websocket para localhost</h2>
+
+<p>
+A conexão websocket é uma forma mais eficiente de trafegar dados entre o cliente e o servidor, porque não há necessidade de abrir a conexão o tempo todo, como ocorre num HTTPRequest. O HTTPRequest demanda o envio de cabeçalhos intermináveis entre o cliente e o servidor, deixando processo muito lento. Eu acabei com o meu limite da internet uma vez que eu deixei a página do protótipo do Pedajoguia aberta. 
+</p>
+
+<p>
+O uso de websockets é importante quando o servidor tem que assumir o papel de avisar o cliente de que uma informação chegou. Sem o websocket é preciso ficar "requesting" o servidor para saber se tem dado disponível, mesmo quando não existe dado disponível e isso é ineficiente. Com websocket é possível organizar um evento no cliente que avisa que um novo dado está disponível. A conexão permanece aberta e isso evita que cabeçálios fiquem trafegando desnecessariamente.
+</p>
+
+<p>
+Existem muitas formas de fazer um websocket. Eu vou apresentar uma baseada em PHP que não requer o uso de APACHE ou TomCat, para ser rodada localmente. Esta forma usa a biblioteca Ratchet. O uso dessa biblioteca requer o uso do composer do PHP, que é uma alternativa às ferramentas semelhantes do tipo Node.js. 
+</p>
+
+<p>
+Para começar é preciso instalar o composer, o que pode ser feito usando os seguintes comandos. Note que a sequência abaixo precisa ser buscada no site adequado porque a chave de verificação pode ser frequentemente atualizada, dependendo da versão. 
+</p>
+
+<div class="codigo">
+<code>
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('sha384', 'composer-setup.php') === 'e5325b19b381bfd88ce90a5ddb7823406b2a38cff6bb704b0acc289a09c8128d4a8ce2bbafcd1fcbdc38666422fe2806') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+</code></div>
+
+<p>
+Segundo o site getcomposer.org, o script acima faz as seguintes coisas:
+</p>
+
+<ol>
+	<li>
+		faz o download do instalador para o diretório corrente
+	</li>
+	<li>
+		verifica o instalador SHA-384, que precisa ser verificado de forma cruzada (preste atenção nisso)
+	</li>
+	<li>
+		executa o instalador
+	</li>
+	<li>
+		remove o instalador
+	</li>
+
+
+</ol>
+
+<p>
+Como já dito, não é o caso de ficar usando o script transcrito, porque a chave pode mudar. O ideal é pegar a última versão do script no site do getcomposer.
+</p>
+
+
+<p>
+Na sequência é preciso criar um arquivo composer.json que vai conter o seguinte:
+</p>
+
+<div class="codigo">
+<code>
+{
+    "autoload": {
+        "psr-4": {
+            "MyApp\\": "src"
+        }
+    },
+    "require": {
+        "cboden/ratchet": "^0.4"
+    }
+}
+</code>
+</div>
+
+<p>
+O arquivo acima precisa ser gravado como <i>composer.json</i> no subdiretório MyApp do diretório de trabalho (essa coisa dos diretórios, como sempre, é muito confusa...)
+</p>
+
+<p>
+Depois é preciso instalar o composer, usando:
+</p>
+
+
+<code>
+composer install
+</code>
+
+<p>
+Ao rodar o instalador dessa forma, será criado um arquivo
+</p>
+
+
+
+
+<script type="text/javascript"><p>
+
+</script>
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+ 

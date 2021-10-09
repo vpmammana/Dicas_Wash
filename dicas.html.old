@@ -1,0 +1,401 @@
+<!doctype html>
+<html>
+<head>
+  <title>Dicas da Tainã</title>
+
+
+  <style type="text/css">
+    div {
+      width: 600px;
+      height: 400px;
+      border: 1px solid lightgray;
+    }
+  </style>
+</head>
+<body>
+<table>
+<tr>
+<td>
+<img src="Taina-Mocambos-Site.png" width="400" style="border: 1px solid black">
+</td>
+<td>
+<p>
+Esta plataforma tem como objetivo compartilhar alguns aprendizados obtidos ao longo do desenvolvimento de plataformas do WASH.
+</p>
+</td>
+</tr>
+</table>
+<h1>Dicas da Tainã</h1>
+<p>
+O objetivo desta plataforma é compartilhar conhecimentos sobre Javascript, Mysql, Apache, VIM e PHP obtidos ao longo do desenvolvimento da plataforma WASH.
+<ul>
+  <li>MySQL</li>
+  <li>Javascript</li>
+  <li>PHP</li>
+  <li>Apache</li>
+  <li>VIM</li>
+</ul>
+
+</p>
+
+<p>
+Trata-se de uma primeira aproximação para um futuro site de dicas de programação nas linguagens indicadas acima.
+</p>
+
+<h2>Dica 1: como corrigir o problema de acentuação gráfica no Apache, quando o arquivo é gerado pelo VIM</h2>
+<p>
+É super comum o problema de acentuação quando criamos um arquivo HTML usando o VIM. 
+</p>
+
+Abaixo vemos um caso típico de arquivo HTML criado pelo VIM sem os devidos cuidados. Usaremos uma variante desta mesma página, criada pelo VIM sem tomar cuidado com o enconding.
+</p>
+<div style="background-color: gray; padding: 10px; width: auto; height: auto"><img src="Exemplo_Acentuacao2.png" width="400" style="border: 1px solid black; align: center"></div>
+<p>
+Para corrigir este problema basta escolher o encoding correto, gravando o arquivo depois de usar o seguinte comando no VIM:
+</p>
+
+<div style="background-color: gray; padding: 10px; width: auto; height: auto"><img src="set_fileencoding.png" width="400" style="border: 1px solid black; align: center"></div>
+
+
+<p>
+Para entrar com o comando "set fileencoding=ISO-8859-1" basta teclar ":" quando o VIM não estiver no modo de inserção. Uma linha na parte de baixo da tela se abrirá para que o comando "set fileencoding=ISO-8859-1" possa ser digitado. A partir daí basta teclar ":w", que é o comando de gravação do VIM, e o arquivo HTML será gravado corretamente.
+</p>
+
+<h2>Dica 2: como corrigir o problema de acentuação gráfica no Apache, quando o arquivo é gerado por outro editor e é importado para o MySQL</h2>
+
+<p> Muitas vezes a origem do problema de acentuação está num arquivo TXT, que foi gravado num formato errado. Para isso, é preciso fazer a conversão usando o comando do linux <b>iconv</b> </p>
+
+<div style="background-color: gray; padding: 10px; width: auto; height: auto"><img src="iconv.png" width="400" style="border: 1px solid black; align: center"></div>
+<p>
+
+<p>
+Depois é possível fazer a importação para a base de dados, entrando no MySQL usando o comando:
+</p> 
+
+<code>mysql -u root -p </code> <p>(será perguntada a senha do usuário, no caso "root")</p> 
+
+<p>Depois de entrar no mysql é preciso selecionar a base de dados usando o comando:</p>
+
+<code>use nome_da_base</code> 
+
+<p>Se você não lembrar o nome da base de dados é preciso buscar com:</p>
+<code>show databases</code>
+
+<p>Uma vez que vc tenha selecionado a base de dados correta, pode criar uma tabela para receber os dados usando: <code>create table NOME_TABELA (campo varchar(100))</code>. 
+<p>Depois pode usar o comando: 
+</p>
+
+<code>
+LOAD DATA INFILE "/var/lib/mysql-files/elementos.txt"
+INTO TABLE temporario
+COLUMNS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+ESCAPED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+</code>
+
+<p> Note que a importação pode ser feita apenas de diretórios previamente autorizados pelo MySQL. Tem como checar quais são verificando uma variável que eu não lembro agora. Mas sei que no meu caso o diretório autorizado é: </p>
+<code> /var/lib/mysql-files </code>
+
+<h3>Quando o "select * from tabela where campo like 'busca%'" não reconhece acentuação</h3>
+
+<p>Mesmo depois de resolver todos os problemas de acentuação indicados acima, você ainda pode se deparar com um problema chatíssimo de resolver, quando o select não consegue buscar palavras com acentuação. Este problema é particularmente difícil de resolver para palavras com cedilha ou til.</p>
+
+<p>Por exemplo: suponha que estou buscando a cidade de "São Paulo" pelas 3 primeiras letras "sao". O select não fornece resultados mesmo tomando cuidado de usar o "like" e o % para "match" as letras similares. A mesma situação ocorre quando estamos procurando a palavra "açu" através das 2 primeiras letras "ac".</p>
+
+<p>Eu tentei um monte de soluções antes de conseguir resolver. Primeiro tentei alterar o character set e o collation através de um alter table:</p>
+
+<code>
+alter table locais2 convert to character set utf8mb4 collate utf8mb4_swedish_ci;
+</code>
+
+<p>MAS ISTO SOZINHO NÃO FUNCIONA! Sequer tenho certeza se esta mudança do character set e do collation é necessária, embora ela afete o comportamento da busca de alguma forma.</p>
+
+<p>De qualquer forma, depois que eu executei o comando "alter table" fiquei com as definições da tabela como segue:</p>
+
+<code>
+| locais2 | CREATE TABLE `locais2` (
+  `lat` varchar(32) COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `longi` varchar(32) COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `cidade` varchar(254) COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `nome` varchar(254) COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `icon` varchar(100) COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `iconSize` varchar(30) COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `iconOffset` varchar(30) COLLATE utf8mb4_swedish_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci |
+
+</code>
+
+<p>Como já disse, esta alteração sozinha não resolveu o problema. Eu continuava sem obter resultados para uma busca com "são", mesmo havendo a cidade de "são paulo" na base de dados. Para conseguir fazer esta busca funcionar, foi preciso usar os comandos mb_detect_enconding e mb_convert_encoding, combinados com o select como segue: </p>
+
+<code>
+$conn= new mysqli("localhost", $username, $pass, $database);
+
+$busca2= mb_convert_encoding($busca, "UTF-8", mb_detect_encoding($busca, "UTF-8, ISO-8859-1, ISO-8859-15", true));
+$sql="select nome,cidade from locais2 where cidade like '".$busca2."%' order by cidade";
+</code>
+
+<h2>Como achar as raízes de uma estrutura de árvore representada em MySQL</h2>
+
+<p>Use o Query abaixo:</p>
+
+<code>select c.nome from elementos as c, elem_elem as a left join elem_elem as b on a.elem2=b.elem1 where b.id is null and c.id=a.elem2;</code>
+
+<h2> Como obter a contagem de registros com as mesmas características</h2>
+
+<p>Use o Query abaixo</p>
+
+<code>
+
+select substring(data,6,2),count(*) from eventos where data like "2014%" group by substring(data,6,2);
+</code>
+
+<p> O resultado desse Query é apresentado abaixo:</p>
+<code style="white-space: pre">
++---------------------+----------+
+| substring(data,6,2) | count(*) |
++---------------------+----------+
+| 06                  |        2 |
+| 07                  |        1 |
+| 08                  |        4 |
+| 09                  |        7 |
+| 10                  |       11 |
+| 11                  |        6 |
+| 12                  |        7 |
++---------------------+----------+
+
+</code>
+
+<h2>Como mostrar uma tabela resultante de um Query em SQL sem perder os espaços em branco?</h2>
+
+<p>O HTML custuma retirar dois espaços em branco seguidos, transformando-os em apenas. Para evitar esse comportamento é preciso colocar o estilo:</p>
+
+<code>style="white-space:pre"</code>
+<p>Por exemplo, vamos dizer que o objetivo é mostrar a tabela abaixo:</p>
+
+<pre>
+<code>
+&ltcode style="white-space: pre"&gt
++---------------------+----------+
+| substring(data,6,2) | count(*) |
++---------------------+----------+
+| 06                  |        2 |
+| 07                  |        1 |
+| 08                  |        4 |
+| 09                  |        7 |
+| 10                  |       11 |
+| 11                  |        6 |
+| 12                  |        7 |
++---------------------+----------+
+&lt/code&gt
+</code>
+</pre>
+
+<p>Ou seja, use <code> &ltcode style="white-space: pre"&gt</code></p>
+
+<h2>Como mostrar os bancos de dados de dados presentes no MySQL em PHP</h2>
+
+<p>Use os seguintes comandos para mostrar os Databases presentes no MySQL:</p>
+
+<code>
+
+
+&ltcode?php <br>
+
+
+$username="victor";<br>
+$pass="ops";<br>
+
+
+$conn = new mysqli ("localhost", $username, $pass, $database);<br>
+
+
+// casos especiais<br>
+
+
+
+$sql="select Db from mysql.db where user='victor'";<br>
+
+
+
+$result=$conn->query("$sql");<br>
+
+
+if ($result->num_rows>0) {<br>
+
+  while($row=$result->fetch_assoc())<br>
+
+    {<br>
+
+      $db=$row["Db"];<br>
+
+      echo "Database: ".$db."\n";<br>
+
+
+
+     }<br>
+
+
+}<br>
+
+
+else { echo "SQL não deu certo. ".$sql;}<br>
+
+
+
+?&gt<br>
+
+
+
+</code>
+
+<h2>Como exportar dados de um banco de dados em MySQL para um arquivo de text comum</h2>
+
+<p>Para exportar dados de um banco de dados em MySQL para um arquivo text é possível usar o comando abaixo:</p>
+
+<code>
+SELECT id,elem1,elem2 FROM elem_elem INTO OUTFILE '/var/lib/mysql-files/elem_elem_sem_quote.txt' FIELDS TERMINATED BY ',' ENCLOSED BY '' LINES TERMINATED BY ',\n';
+</code>
+
+<p>Note que foi escolhido um diretóio específico para guardar o arquivo resultante do Query. Isso tem que ser assim, caso contrário obtemos um erro do tipo: </p>
+
+<code>--secure-prive-prive</code>
+
+<h2>Como copiar um banco de dados (database) sem transferir os dados para o novo banco em MySQL</h2>
+
+<p>Para copiar um banco de dados, sem transferir os dados, basta usar o seguinte comando:</p>
+
+<code> mysqldump -u usuario -pSENHA -d BancoFonte | mysql -u usuario -pSENHA -D BancoDestino </code>
+
+<p>Note que "usuario" é o nome do usuário do banco origem. Este usuário já precisa existir na base. </p>
+<p>A "SENHA" é a senha do usuário, que deve ser colocada logo de pois do modificador "-p", sem espaço.</p>
+<p>"BancoFonte" é o nome do banco de dados existente no MySQL do qual será copiada a estrutura. "BancoDestino" é o banco de dados para onde será copiada a estrutura. Note que o "BancoDestino" precisa existir no servidor "MySQL", mesmo sendo vazio.</p>
+<p>Para criar o "BancoDestino" é preciso usar o comando:</p>
+
+<code> create database BancoDestino character set UTF8mb4 collate utf8mb4_bin; </code>
+
+<p>Também é necessário atribuir o usuário ao BancoDestino, o que é feito pelo seguinte comando:</p>
+
+<code>grant all privileges on BancoDestino.* to 'usuario'@'localhost' identified by 'SENHA'</code>
+
+<h2>Como executar um comando antes de fechar uma janela</h2>
+
+<p>Você pode "override" o fechamento de uma janela, desde que o não esteja envolvida a abertura de um pop-up, alert, ou outra forma semelhante.</p>
+
+<p>Para isso, basta usar o seguinte código:</p>
+
+<code>
+window.onbeforeunload = function () {<br>
+   // window.opener.alert("test");<br>
+   //_close();        <br>
+   return callBack();<br>
+};<br>
+function callBack()<br>
+{<br>
+    saida();<br>
+    return;<br>
+}<br>
+</code>
+<p>Onde <code>saida()</code> é a chamada de uma função de  saída que precisa ser executada antes que a janela seja fechada.</p>
+
+<h2>Como acessar um elemento de outra janela</h2>
+<p>Se você quiser acessar um elemento do DOM de uma janela pai (parent), você pode usar:</p>
+
+<code>window.opener.document.getElementById("id_elemento_pai").innerText="oi";</code>
+
+Se você quer acessar um componente do filho, a partir do pai:
+
+<code>
+a=window.open()<br>
+a.document.getElementById("mydiv")<br>
+</code>
+
+<h2>Como mudar o pitch de um som</h2>
+
+<p>Para mudar o pitch de um arquivo de áudio é possível usar o seguinte comando:</p>
+
+<code>
+sox infile.wav outfile.wav pitch -500
+</code>
+
+<p>Para instalar o sox podemos usar:</p>
+
+<code>apt-get install sox libsox-fmt-pulse pavucontrol</code>
+
+<h2>Como usar o sintetizador de voz no linux</h2>
+
+<p>Use o comando espeak:</p>
+
+<code>espeak -vpt+f1 -p 75 -s 130 -g 5 -f RoteiroBabolina</code>
+
+<p>Ou use o lianetts do Serpro, que é bem superior:</p>
+
+<code>lianetts -a 1.2 RoteiroBabolina</code>
+ 
+<h2>Como gravar áudio do microfone</h2>
+
+<p> Para gravar áudio do microfone interno, podemos usar o seguinte comando:</p>
+
+<code>sox -t alsa default output.wav</code>
+
+<h2>Como gravar do áudio interno, sem passar pelo microfone</h2>
+
+<p> Primeiro verifique as fontes de áudio ativas.</p>
+
+<code>pactl list short sources</code>
+
+<p> Você obterá uma lista das fontes de áudio ativas.</p>
+
+<code>
+0	alsa_output.pci-0000_00_1b.0.analog-stereo.monitor	module-alsa-card.c	s16le 2ch 48000Hz	IDLE <br>
+1	alsa_input.pci-0000_00_1b.0.analog-stereo	module-alsa-card.c	s16le 2ch 48000Hz	RUNNING <br>
+</code>
+
+<p> A linha de baixo do código acima é referente ao microfone. A linha de cima é referente ao som interno do computador.</p>
+
+<p> Para acessar o som interno (sem passar pelo microfone), você pode usar:
+
+<code>sox -t pulseaudio alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -t wav test.wav</code>
+
+<p>Para tocar o som depois de gravado, você pode usar:</p>
+
+<code>play test.wav</code>
+
+<p>Pode acontecer do volume da fonte de som interna estar baixo. Para verificar o volume, vc pode usar o comando:</p>
+
+<code>pactl list sources</code>
+
+<p> A diferença desse comando é que ele fará uma descrição extensa das informações das fontes de som, inclusive o volume.</p>
+
+<p> Se o volume da fonte interna do som, sem passar pelo microfone, estiver muito baixo, é possível aumentar com o seguinte comando:</p>
+
+<code>pactl set-source-volume alsa_output.pci-0000_00_1b.0.analog-stereo.monitor 100%</code>
+
+<p> O comando acima aumentará o volume para o nível de 100%</p>
+
+<p> Você pode também listar os sinks de som:</p>
+
+<code> pactl list sinks </code>
+
+<h2>Como usar o Google para sintetizar voz</h2>
+
+<p> O ideal é instalar o <b> Aloud </b> no Chrome e fazer ele ler o texto que está numa webpage, por exemplo, este texto aqui funciona muito bem.</p>
+
+<p> Você liga o Aloud para gerar o som e usa o sox para gravar, chamando o sox numa linha de comando do linux. </p>
+
+<p> É preciso indicar a fonte interna de som. Para identificar qual fonte é, usamos o <b>pactl</b> que foi descrito acima, inserindo como parâmetro no comando sox: </p>
+
+<code>sox -t pulseaudio alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -t wav test.wav</code>
+
+
+<script type="text/javascript">
+</script>
+
+
+</body>
+</html>
+
+
+
+ 

@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+  <title>Dicas da Tainã - teste</title>
+
+
+  <style type="text/css">
+    div {
+      width: 600px;
+      height: 400px;
+      border: 1px solid lightgray;
+    }
+  </style>
+</head>
+<body>
+<table>
+<tr>
+<td>
+<img src="Taina-Mocambos-Site.png" width="400" style="border: 1px solid black">
+</td>
+<td>
+<p>
+Esta plataforma tem como objetivo compartilhar alguns aprendizados obtidos ao longo do desenvolvimento de plataformas do WASH.
+</p>
+</td>
+</tr>
+</table>
+<h1>Dicas da Tainã - Teste</h1>
+<p>
+O objetivo desta plataforma é compartilhar conhecimentos sobre Javascript, Mysql, Apache, VIM e PHP obtidos ao longo do desenvolvimento da plataforma WASH.
+<ul>
+  <li>MySQL</li>
+  <li>Javascript</li>
+  <li>PHP</li>
+  <li>Apache</li>
+  <li>VIM</li>
+</ul>
+
+</p>
+
+<p>
+Trata-se de uma primeira aproximação para um futuro site de dicas de programação nas linguagens indicadas acima.
+</p>
+
+<h3>Dica 1: como corrigir o problema de acentuação gráfica no Apache, quando o arquivo é gerado pelo VIM</h3>
+<p>
+É super comum o problema de acentuação quando criamos um arquivo HTML usando o VIM. 
+</p>
+
+Abaixo vemos um caso típico de arquivo HTML criado pelo VIM sem os devidos cuidados. Usaremos uma variante desta mesma página, criada pelo VIM sem tomar cuidado com o enconding.
+
+<img src="Exemplo_Acentuacao.png">
+
+<h3>Interacoes</h3>
+
+<p>A tabela "Interações" é similar à tabela fragmentos, mas focaliza o armazenamento dos nomes das interações no campo "interações". </p>
+
+<img src="Interacoes.jpg">
+
+
+<script type="text/javascript">
+</script>
+
+
+</body>
+</html>
+
