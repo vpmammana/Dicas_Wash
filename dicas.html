@@ -4152,6 +4152,30 @@ Observei que também pode ser necessário colocar true no parâmetro useCapture 
 Teste
 </p>
 
+<h2>Como definir a altura de um input text</h2>
+
+<p>
+A resposta dos browsers à definição da altura de um input é caótica. Não espere muita coisa das propriedades height ou line-height.
+</p>
+
+<p>
+A coisa só começou a funcionar (mais ou menos) com o seguinte CSS:
+</p>
+
+
+<div class="codigo">
+<code>
+input[type="text"] {
+	font-size: 1em;
+	line-height: 1em;
+	display: inline-block;
+	padding: 0px;
+	border: none;
+}
+</code>
+</div>
+
+
 
 <script type="text/javascript">
 
