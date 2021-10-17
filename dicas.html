@@ -4181,6 +4181,16 @@ input[type="text"] {
 A melhor forma de animar no javascript nao eh usar "setInterval". Eh melhor usar requestAnimationFrame, porque vc consegue deixar para o browser buscar o momento do rapaint para fazer a animacao. Fica xuxu.
 </p>
 
+<h2>Os filhos herdam a opacity dos pais</h2>
+
+<p>
+Não adianta definir a opacidade de um filho de um div que já esteja com opacidade definida. Todos os filhos vão herdar a opacidade dos pais.
+</p>
+
+<p>
+Uma forma que talvez funcione é usar um rgb(r,g,b,a). Outra possibilidade é deixar o pai transparente e colocar um DIV independente por baixo, com a opacidade desejada.
+</p>
+
 
 <script type="text/javascript">
 
